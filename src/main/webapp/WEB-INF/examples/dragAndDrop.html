@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>HTML5 - DragAndDrop</title>
+	<script type="text/javascript">
+		function start( e ){
+			e.dataTransfer.effectAllowed = "move"; // Define el tipo de efecto
+			e.dataTransfer.setData("id_draggable", e.target.getAttribute("id")); //Coge el elemento a mover 
+			e.dataTransfer.setDragImage(e.target, 0, 0); // Hace una copia del elemento que sera la que se mueva con el raton antes de soltarlo.
+			return true;
+		}
+		// Cuando entra el evento en acciÃ³n
+		function enter( e ){
+			return true;
+		}
+		// Mientras el usuario no a soltado el elemento (return false SI puede soltar, return true NO puede soltar)
+		function over( e ){
+			var id_dest = e.target.getAttribute("id");
+			var id_draggable = e.dataTransfer.getData("id_draggable");
+			if( id_dest=='dest_1') return false;
+			else if( id_dest=='dest_2' && id_draggable=='draggable_3' ) return false;
+			else if( id_dest=='dest_3' && ( id_draggable=='draggable_1' || id_draggable=='draggable_2' ) ) return false;
+			else return true;	
+		}
+		// Cuando un usuario suelta el elemento dentro de otro
+		function drop( e ){
+			var id_draggable = e.dataTransfer.getData("id_draggable");
+			e.target.appendChild(document.getElementById(id_draggable));
+			e.stopPropagation();
+			return false;
+		}
+		// Cuando el evento drop acaba, sirve para limpiar los datos del elemente dataTransfer
+		function end( e ){
+			e.dataTransfer.clearData("id_draggable");
+			return true;
+		}
+	</script>
+	<style type="text/css">
+		div.destination{
+			float: left;
+			width: 250px;
+			height: 250px;
+			padding: 10px;
+			margin: 10px;
+			background-color: silver;
+		}
+		div.draggable{
+			display: block;
+			width: 75px;
+			height: 70px;
+			padding: 5px;
+			margin: 5px;	
+		}
+		div#draggable_1{ background-color: red; }
+		div#draggable_2{ background-color: green; }
+		div#draggable_3{ background-color: blue; }
+	</style>
+</head>
+<body>
+	<h1>DragAndDrop Example</h1>
+	<div class="destination" id="dest_1" ondragenter="return enter(event)" ondragover="return over(event)" ondrop="return drop(event)">
+		<div class="draggable" id="draggable_1" draggable="true" ondragstart="return start(event)" ondragend="return end(event)">1</div>
+		<div class="draggable" id="draggable_2" draggable="true" ondragstart="return start(event)" ondragend="return end(event)">2</div>
+		<div class="draggable" id="draggable_3" draggable="true" ondragstart="return start(event)" ondragend="return end(event)">3</div>
+	</div>
+	<div class="destination" id="dest_2" ondragenter="return enter(event)" ondragover="return over(event)" ondrop="return drop(event)"></div>
+	<div class="destination" id="dest_3" ondragenter="return enter(event)" ondragover="return over(event)" ondrop="return drop(event)"></div>	
+</body>
+</html>
